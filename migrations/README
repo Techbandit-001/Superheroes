@@ -1,0 +1,17 @@
+Single-database configuration for Flask.
+
+# 🦸‍♂️ Superheroes API
+
+This is a Flask-based RESTful API for managing superheroes, their powers, and how strong each hero is with a particular power. Built as part of a coding challenge, this project demonstrates working with models, relationships, serialization, and CRUD operations using Flask and SQLAlchemy.
+
+---
+
+## 📌 Features
+
+- View all heroes and powers
+- View detailed info for a single hero or power
+- Assign powers to heroes with strength levels
+- RESTful routes following standard HTTP methods
+- JSON responses compatible with provided Postman collection
+
+--
