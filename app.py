@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from models import db
 from resources.heroes import HeroesResource
 from resources.powers import PowersResource
+from resources.hero_power import HeroPowerResource
 
 app = Flask(__name__)
 
@@ -60,6 +61,7 @@ def delete_category(id):
 
 api.add_resource(HeroesResource, "/heroes", "/heroes/<id>")
 api.add_resource(PowersResource, "/powers", "/powers/<id>")
+api.add_resource(HeroPowerResource, "/hero_powers", "/hero_powers/<int:id>")
 
 # if __name__ == "__main__":
 #     app.run(debug=True)
