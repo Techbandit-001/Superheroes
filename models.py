@@ -17,6 +17,10 @@ class Hero(db.Model, SerializerMixin):
 
     hero_powers = db.relationship("HeroPower", back_populates="hero", cascade="all, delete-orphan")
 
+    # Exclude reverse relationship unless needed
+    serialize_rules = ("-hero_powers.hero",)
+
+
 class Power(db.Model, SerializerMixin):
     __tablename__ = "powers"
 
@@ -26,8 +30,12 @@ class Power(db.Model, SerializerMixin):
 
     hero_powers = db.relationship("HeroPower", back_populates="power", cascade="all, delete-orphan")
 
-class HeroPower(db.Model):
+    serialize_rules = ("-hero_powers.power",)
+
+
+class HeroPower(db.Model, SerializerMixin):
     __tablename__ = 'hero_powers'
+
     id = db.Column(db.Integer, primary_key=True)
     strength = db.Column(db.String)
     hero_id = db.Column(db.Integer, db.ForeignKey('heroes.id'))
@@ -35,3 +43,6 @@ class HeroPower(db.Model):
 
     hero = db.relationship("Hero", back_populates="hero_powers")
     power = db.relationship("Power", back_populates="hero_powers")
+
+    # Optional: Include nested hero and power data if desired
+    serialize_rules = ("hero", "power")
