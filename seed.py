@@ -4,19 +4,20 @@ from models import db, Hero, Power, HeroPower
 
 if __name__ == '__main__':
     with app.app_context():
-        print("Clearing db...")
+        print("Clearing database...")
         HeroPower.query.delete()
         Power.query.delete()
         Hero.query.delete()
 
         print("Seeding powers...")
         powers = [
-            Power(name="super strength", description="Gives the wielder super-human strengths."),
-            Power(name="flight", description="Gives the wielder the ability to fly through the skies at supersonic speed."),
-            Power(name="super human senses", description="Allows the wielder to use their senses at a super-human level."),
-            Power(name="elasticity", description="Can stretch the human body to extreme lengths."),
+            Power(name="Super Strength", description="Gives the wielder super-human strength."),
+            Power(name="Flight", description="Allows the wielder to fly at supersonic speed."),
+            Power(name="Super Human Senses", description="Enhances senses to super-human levels."),
+            Power(name="Elasticity", description="Can stretch the human body to extreme lengths."),
         ]
         db.session.add_all(powers)
+        db.session.commit()
 
         print("Seeding heroes...")
         heroes = [
@@ -32,17 +33,20 @@ if __name__ == '__main__':
             Hero(name="Elektra Natchios", super_name="Elektra"),
         ]
         db.session.add_all(heroes)
+        db.session.commit()
 
-        print("Adding powers to heroes...")
+        print("Assigning powers to heroes...")
         strengths = ["Strong", "Weak", "Average"]
         hero_powers = []
 
         for hero in heroes:
-            power = rc(powers)
-            hero_powers.append(
-                HeroPower(hero=hero, power=power, strength=rc(strengths))
-            )
+            assigned_powers = [rc(powers) for _ in range(rc([1, 2]))]
+            for power in set(assigned_powers):  # Avoid duplicates
+                hero_powers.append(
+                    HeroPower(hero=hero, power=power, strength=rc(strengths))
+                )
 
         db.session.add_all(hero_powers)
         db.session.commit()
-        print("Done seeding!")
+
+        print("✅ Done seeding!")

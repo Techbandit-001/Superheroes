@@ -1,7 +1,6 @@
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
-from datetime import datetime
 
 # Initialize metadata and database
 metadata = MetaData()
@@ -9,40 +8,35 @@ db = SQLAlchemy(metadata=metadata)
 
 class Hero(db.Model, SerializerMixin):
     __tablename__ = "heroes"
+    serialize_rules = ("-hero_powers.hero", "-hero_powers.power.hero_powers")  # 👈 prevent deep nesting
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    supername = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    super_name = db.Column(db.Text, nullable=False)
 
     hero_powers = db.relationship("HeroPower", back_populates="hero", cascade="all, delete-orphan")
-
-    # Exclude reverse relationship unless needed
-    serialize_rules = ("-hero_powers.hero",)
 
 
 class Power(db.Model, SerializerMixin):
     __tablename__ = "powers"
+    serialize_rules = ("-hero_powers.power", "-hero_powers.hero.hero_powers")  # 👈 avoid deep circular ref
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    description = db.Column(db.Text, nullable=False)
 
     hero_powers = db.relationship("HeroPower", back_populates="power", cascade="all, delete-orphan")
-
-    serialize_rules = ("-hero_powers.power",)
 
 
 class HeroPower(db.Model, SerializerMixin):
     __tablename__ = 'hero_powers'
+    serialize_rules = ("hero.id", "hero.name", "hero.super_name", "power.name", "strength")  
+    # 👈 Serialize only specific fields to avoid recursion
 
     id = db.Column(db.Integer, primary_key=True)
-    strength = db.Column(db.String)
+    strength = db.Column(db.String, nullable=False)
     hero_id = db.Column(db.Integer, db.ForeignKey('heroes.id'))
     power_id = db.Column(db.Integer, db.ForeignKey('powers.id'))
 
     hero = db.relationship("Hero", back_populates="hero_powers")
     power = db.relationship("Power", back_populates="hero_powers")
-
-    # Optional: Include nested hero and power data if desired
-    serialize_rules = ("hero", "power")

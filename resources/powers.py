@@ -12,6 +12,7 @@ class PowersResource(Resource):
             if power:
                 return power.to_dict(), 200
             return {"error": "Power not found"}, 404
+        
 
     def post(self):
         data = request.get_json()
